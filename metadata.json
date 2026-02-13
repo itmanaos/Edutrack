@@ -1,0 +1,8 @@
+{
+  "name": "EduTrack Pro - Suite de Gestão Acadêmica",
+  "description": "Sistema avançado de controle de frequência, biometria e dashboard institucional em tempo real para instituições de ensino.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
