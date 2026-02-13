@@ -1,12 +1,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Scan, Smartphone, Keyboard, CheckCircle2, AlertCircle, History, RefreshCcw } from 'lucide-react';
+import { Camera, Scan, Smartphone, Keyboard, CheckCircle2, AlertCircle, History, RefreshCcw, Send, Loader2 } from 'lucide-react';
 import { mockStudents } from '../services/mockData';
 import { Student } from '../types';
 
 const AccessControl: React.FC = () => {
   const [method, setMethod] = useState<'FACIAL' | 'QR' | 'MANUAL'>('FACIAL');
   const [status, setStatus] = useState<'IDLE' | 'SCANNING' | 'SUCCESS' | 'ERROR'>('IDLE');
+  const [notificationStatus, setNotificationStatus] = useState<'IDLE' | 'SENDING' | 'SENT'>('IDLE');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [matchedStudent, setMatchedStudent] = useState<Student | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
@@ -15,7 +16,6 @@ const AccessControl: React.FC = () => {
 
   useEffect(() => {
     if (method === 'FACIAL' && status === 'SCANNING') {
-      // Use a slight delay to ensure the video element is mounted in the DOM
       const timer = setTimeout(() => {
         startCamera();
       }, 100);
@@ -49,7 +49,6 @@ const AccessControl: React.FC = () => {
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        // Ensure play is called after setting srcObject
         try {
           await videoRef.current.play();
         } catch (playErr) {
@@ -81,14 +80,11 @@ const AccessControl: React.FC = () => {
 
   const simulateScan = () => {
     setStatus('SCANNING');
-    // If it's not facial, we just simulate a delay. 
-    // If it IS facial, the useEffect handles startCamera.
     if (method !== 'FACIAL') {
       performScanLogic();
     } else {
-      // For facial, we wait 3 seconds of "looking" at the camera
       setTimeout(() => {
-        if (status === 'SCANNING') performScanLogic();
+        performScanLogic();
       }, 3000);
     }
   };
@@ -97,6 +93,15 @@ const AccessControl: React.FC = () => {
     const randomStudent = mockStudents[Math.floor(Math.random() * mockStudents.length)];
     setMatchedStudent(randomStudent);
     setStatus('SUCCESS');
+    
+    // Simular início do envio de notificação
+    setNotificationStatus('SENDING');
+    
+    // Simular delay de rede/processamento da notificação
+    setTimeout(() => {
+      setNotificationStatus('SENT');
+    }, 1800);
+
     setLogs(prev => [{
       id: Date.now(),
       name: randomStudent.name,
@@ -104,17 +109,17 @@ const AccessControl: React.FC = () => {
       type: 'ENTRADA'
     }, ...prev]);
 
-    // Reset after 3 seconds
+    // Aumentar o tempo de exibição para 5 segundos para que o usuário veja o status da notificação
     setTimeout(() => {
       setStatus('IDLE');
       setMatchedStudent(null);
-    }, 3000);
+      setNotificationStatus('IDLE');
+    }, 5000);
   };
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left: Interactive Area */}
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
@@ -218,11 +223,27 @@ const AccessControl: React.FC = () => {
                   <div>
                     <h4 className="text-2xl font-bold text-slate-800">{matchedStudent.name}</h4>
                     <p className="text-indigo-600 font-semibold">{matchedStudent.classId} • ID: {matchedStudent.id}</p>
-                    <div className="mt-4 flex flex-col items-center gap-2">
-                      <span className="px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide">
+                    <div className="mt-4 flex flex-col items-center gap-3">
+                      <span className="px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide shadow-sm border border-emerald-200">
                         Acesso Autorizado
                       </span>
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Notificação enviada aos responsáveis</p>
+                      
+                      {/* Área de Notificação Simulada */}
+                      <div className="flex flex-col items-center min-h-[40px]">
+                        {notificationStatus === 'SENDING' && (
+                          <div className="flex items-center gap-2 text-slate-400 animate-pulse">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span className="text-[10px] font-bold uppercase tracking-tighter">Enviando notificação aos pais...</span>
+                          </div>
+                        )}
+                        {notificationStatus === 'SENT' && (
+                          <div className="flex items-center gap-2 text-indigo-500 animate-in slide-in-from-top-2">
+                            <Send className="w-3 h-3" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter">Responsáveis notificados com sucesso</span>
+                            <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -258,7 +279,6 @@ const AccessControl: React.FC = () => {
           </div>
         </div>
 
-        {/* Right: Real-time Logs */}
         <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col h-[600px]">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
              <div className="flex items-center gap-3">

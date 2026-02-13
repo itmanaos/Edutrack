@@ -13,14 +13,19 @@ export enum AttendanceStatus {
   EARLY_EXIT = 'EARLY_EXIT'
 }
 
+export type StudentStatus = 'IN_SCHOOL' | 'IN_CLASS' | 'AWAY' | 'ACTIVE' | 'INACTIVE';
+
 export interface Student {
   id: string;
   name: string;
   classId: string;
   photoUrl: string;
-  status: 'IN_SCHOOL' | 'IN_CLASS' | 'AWAY';
+  status: StudentStatus;
   lastAccess: string;
-  birthday?: string; // Format: MM-DD
+  birthday?: string; // Format: YYYY-MM-DD
+  guardianName?: string;
+  guardianPhone?: string;
+  guardianEmail?: string;
 }
 
 export interface Classroom {

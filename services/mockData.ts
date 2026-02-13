@@ -1,15 +1,55 @@
 
-import { Student, Classroom, Announcement, MenuDay, UserRole } from '../types';
-
-// Get current date in MM-DD format for mock purposes
-const today = new Date();
-const todayFormatted = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+import { Student, Classroom, Announcement, MenuDay } from '../types';
 
 export const mockStudents: Student[] = [
-  { id: '101', name: 'Ana Silva', classId: '3A', photoUrl: 'https://picsum.photos/id/1011/200', status: 'IN_CLASS', lastAccess: '08:05', birthday: todayFormatted },
-  { id: '102', name: 'Bruno Santos', classId: '3A', photoUrl: 'https://picsum.photos/id/1012/200', status: 'IN_SCHOOL', lastAccess: '07:50', birthday: '12-25' },
-  { id: '103', name: 'Carla Oliveira', classId: '2B', photoUrl: 'https://picsum.photos/id/1013/200', status: 'AWAY', lastAccess: '-', birthday: todayFormatted },
-  { id: '104', name: 'Diego Lima', classId: '3A', photoUrl: 'https://picsum.photos/id/1014/200', status: 'IN_CLASS', lastAccess: '08:15', birthday: '01-01' },
+  { 
+    id: '101', 
+    name: 'Ana Silva', 
+    classId: '3A', 
+    photoUrl: 'https://picsum.photos/id/1011/200', 
+    status: 'IN_CLASS', 
+    lastAccess: '08:05', 
+    birthday: '2008-05-15',
+    guardianName: 'Maria Silva',
+    guardianPhone: '(11) 91234-5678',
+    guardianEmail: 'maria@email.com'
+  },
+  { 
+    id: '102', 
+    name: 'Bruno Santos', 
+    classId: '3A', 
+    photoUrl: 'https://picsum.photos/id/1012/200', 
+    status: 'IN_SCHOOL', 
+    lastAccess: '07:50', 
+    birthday: '2007-11-20',
+    guardianName: 'José Santos',
+    guardianPhone: '(11) 92345-6789',
+    guardianEmail: 'jose@email.com'
+  },
+  { 
+    id: '103', 
+    name: 'Carla Oliveira', 
+    classId: '2B', 
+    photoUrl: 'https://picsum.photos/id/1013/200', 
+    status: 'AWAY', 
+    lastAccess: '-', 
+    birthday: '2009-03-10',
+    guardianName: 'Roberta Oliveira',
+    guardianPhone: '(11) 93456-7890',
+    guardianEmail: 'roberta@email.com'
+  },
+  { 
+    id: '104', 
+    name: 'Diego Lima', 
+    classId: '3A', 
+    photoUrl: 'https://picsum.photos/id/1014/200', 
+    status: 'IN_CLASS', 
+    lastAccess: '08:15', 
+    birthday: '2008-01-01',
+    guardianName: 'Carlos Lima',
+    guardianPhone: '(11) 94567-8901',
+    guardianEmail: 'carlos@email.com'
+  },
 ];
 
 export const mockClassrooms: Classroom[] = [

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Filter, Plus, MoreVertical } from 'lucide-react';
+import { Search, Filter, Plus, MoreVertical, Cake } from 'lucide-react';
 import { mockStudents } from '../services/mockData';
 
 const Students: React.FC = () => {
@@ -34,6 +34,7 @@ const Students: React.FC = () => {
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Aluno</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Data Nasc.</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Turma</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status Atual</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Último Acesso</th>
@@ -50,6 +51,12 @@ const Students: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 font-mono text-sm text-slate-500">{student.id}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <Cake className="w-3 h-3 text-pink-400" />
+                      {student.birthday ? new Date(student.birthday).toLocaleDateString('pt-BR') : '--/--/----'}
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-sm font-medium text-slate-700">{student.classId}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${

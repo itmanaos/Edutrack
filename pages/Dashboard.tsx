@@ -49,8 +49,14 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv }) => 
   }, []);
 
   const today = new Date();
-  const todayFormatted = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const birthdayStudents = mockStudents.filter(s => s.birthday === todayFormatted);
+  const currentMonthDay = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  
+  // Filter students whose birthday (MM-DD) matches today's month and day
+  const birthdayStudents = mockStudents.filter(s => {
+    if (!s.birthday) return false;
+    const studentMonthDay = s.birthday.split('-').slice(1).join('-');
+    return studentMonthDay === currentMonthDay;
+  });
 
   // Weather mock data
   const weather = {

@@ -1,12 +1,22 @@
 
-import React from 'react';
-import { mockClassrooms } from '../services/mockData';
-import { Classroom } from '../types';
-import { User, BookOpen, AlertTriangle } from 'lucide-react';
+import React, { useState } from 'react';
+import { mockClassrooms, mockStudents } from '../services/mockData';
+import { Classroom, Student } from '../types';
+import { User, BookOpen, AlertTriangle, X, Clock, MapPin } from 'lucide-react';
 
 const ClassroomMap: React.FC = () => {
+  const [selectedRoom, setSelectedRoom] = useState<Classroom | null>(null);
+
+  const handleOpenAttendance = (room: Classroom) => {
+    setSelectedRoom(room);
+  };
+
+  const handleCloseAttendance = () => {
+    setSelectedRoom(null);
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Mapa de Ocupação</h2>
@@ -26,20 +36,32 @@ const ClassroomMap: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockClassrooms.map(room => (
-          <RoomCard key={room.id} room={room} />
+          <RoomCard 
+            key={room.id} 
+            room={room} 
+            onViewAttendance={() => handleOpenAttendance(room)} 
+          />
         ))}
       </div>
+
+      {/* Attendance Modal */}
+      {selectedRoom && (
+        <AttendanceModal 
+          room={selectedRoom} 
+          onClose={handleCloseAttendance} 
+        />
+      )}
     </div>
   );
 };
 
-const RoomCard: React.FC<{ room: Classroom }> = ({ room }) => {
+const RoomCard: React.FC<{ room: Classroom; onViewAttendance: () => void }> = ({ room, onViewAttendance }) => {
   const occupancyRate = (room.currentCount / room.capacity) * 100;
   const isHighOccupancy = occupancyRate > 85;
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:border-indigo-300 transition-all hover:shadow-md group">
-      <div className="p-6">
+    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:border-indigo-300 transition-all hover:shadow-md group flex flex-col h-full">
+      <div className="p-6 flex-1">
         <div className="flex justify-between items-start mb-4">
           <div>
             <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">Ativo</span>
@@ -82,9 +104,95 @@ const RoomCard: React.FC<{ room: Classroom }> = ({ room }) => {
           </div>
         </div>
       </div>
-      <button className="w-full py-4 bg-slate-50 border-t border-slate-100 text-sm font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-        Ver Lista de Presença
+      <button 
+        onClick={onViewAttendance}
+        className="w-full py-4 bg-slate-50 border-t border-slate-100 text-sm font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center gap-2"
+      >
+        <span>Ver Lista de Presença</span>
       </button>
+    </div>
+  );
+};
+
+const AttendanceModal: React.FC<{ room: Classroom; onClose: () => void }> = ({ room, onClose }) => {
+  // Filter students by room ID (matching mock student classId with room id)
+  const presentStudents = mockStudents.filter(s => s.classId === room.id || s.classId === room.id.split(' ')[0]);
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-200">
+        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-600 text-white">
+          <div>
+            <div className="flex items-center gap-2 text-indigo-200 text-xs font-bold uppercase tracking-widest mb-1">
+              <MapPin className="w-3 h-3" />
+              {room.id}
+            </div>
+            <h3 className="text-xl font-bold">Lista de Presença: {room.subject}</h3>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
+        <div className="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+          <div className="flex gap-6">
+            <div className="text-center">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Capacidade</p>
+              <p className="text-lg font-bold text-slate-700">{room.capacity}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Presentes</p>
+              <p className="text-lg font-bold text-indigo-600">{presentStudents.length}</p>
+            </div>
+          </div>
+          <span className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            Sincronizado Agora
+          </span>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {presentStudents.length > 0 ? (
+            <div className="space-y-3">
+              {presentStudents.map((student, idx) => (
+                <div 
+                  key={student.id} 
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:shadow-sm transition-shadow animate-in slide-in-from-bottom-2 duration-300"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
+                  <img src={student.photoUrl} className="w-12 h-12 rounded-full object-cover border-2 border-slate-100 shadow-sm" alt={student.name} />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-800">{student.name}</p>
+                    <p className="text-xs text-slate-400 font-medium">ID: {student.id}</p>
+                  </div>
+                  <div className="text-right flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                      <Clock className="w-3 h-3" />
+                      Entrada: {student.lastAccess}
+                    </div>
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded text-[9px] font-bold uppercase tracking-tight">
+                      Confirmado
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-20 flex flex-col items-center justify-center text-slate-400 opacity-50 italic">
+               <User className="w-12 h-12 mb-4" />
+               <p className="font-medium">Nenhum aluno registrado nesta sala no momento.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 border-t border-slate-100 bg-slate-50">
+          <button 
+            onClick={onClose}
+            className="w-full py-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all shadow-sm active:scale-95"
+          >
+            Fechar Visualização
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
