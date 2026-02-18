@@ -13,7 +13,7 @@ export enum AttendanceStatus {
   EARLY_EXIT = 'EARLY_EXIT'
 }
 
-export type StudentStatus = 'IN_SCHOOL' | 'IN_CLASS' | 'AWAY' | 'ACTIVE' | 'INACTIVE';
+export type StudentStatus = 'IN_SCHOOL' | 'IN_CLASS' | 'AWAY' | 'ACTIVE' | 'INACTIVE' | 'LATE' | 'ABSENT';
 
 export interface Student {
   id: string;
@@ -35,6 +35,7 @@ export interface Classroom {
   currentCount: number;
   teacherId: string;
   subject: string;
+  startTime?: string; // e.g., "08:00"
 }
 
 export interface Announcement {
@@ -43,6 +44,15 @@ export interface Announcement {
   content: string;
   scheduledFor: string;
   category: 'EVENT' | 'URGENT' | 'GENERAL';
+}
+
+export interface EmergencyAlert {
+  id: string;
+  title: string;
+  message: string;
+  type: 'CRITICAL' | 'URGENT' | 'INFO';
+  timestamp: string;
+  target: 'ALL' | 'TEACHERS' | 'PARENTS';
 }
 
 export interface MenuDay {

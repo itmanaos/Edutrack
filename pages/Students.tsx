@@ -1,9 +1,13 @@
 
 import React from 'react';
-import { Search, Filter, Plus, MoreVertical, Cake } from 'lucide-react';
-import { mockStudents } from '../services/mockData';
+import { Search, Filter, Plus, MoreVertical, Cake, Clock, AlertCircle } from 'lucide-react';
+import { Student } from '../types';
 
-const Students: React.FC = () => {
+interface StudentsProps {
+  students: Student[];
+}
+
+const Students: React.FC<StudentsProps> = ({ students = [] }) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
@@ -20,7 +24,7 @@ const Students: React.FC = () => {
             <Filter className="w-5 h-5" />
             <span>Filtros</span>
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-md active:scale-95">
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-md">
             <Plus className="w-5 h-5" />
             <span>Novo Aluno</span>
           </button>
@@ -34,15 +38,14 @@ const Students: React.FC = () => {
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Aluno</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ID</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Data Nasc.</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Turma</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status Atual</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Último Acesso</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Último Evento</th>
                 <th className="px-6 py-4"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {mockStudents.map(student => (
+              {students.map(student => (
                 <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -51,19 +54,17 @@ const Students: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 font-mono text-sm text-slate-500">{student.id}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Cake className="w-3 h-3 text-pink-400" />
-                      {student.birthday ? new Date(student.birthday).toLocaleDateString('pt-BR') : '--/--/----'}
-                    </div>
-                  </td>
                   <td className="px-6 py-4 text-sm font-medium text-slate-700">{student.classId}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 w-fit ${
                       student.status === 'IN_CLASS' ? 'bg-emerald-100 text-emerald-600' :
                       student.status === 'IN_SCHOOL' ? 'bg-indigo-100 text-indigo-600' :
+                      student.status === 'LATE' ? 'bg-amber-100 text-amber-600 animate-pulse' :
+                      student.status === 'ABSENT' ? 'bg-rose-100 text-rose-600' :
                       'bg-slate-100 text-slate-400'
                     }`}>
+                      {student.status === 'LATE' && <Clock className="w-2.5 h-2.5" />}
+                      {student.status === 'ABSENT' && <AlertCircle className="w-2.5 h-2.5" />}
                       {student.status.replace('_', ' ')}
                     </span>
                   </td>

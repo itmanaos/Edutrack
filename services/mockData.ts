@@ -1,6 +1,10 @@
 
 import { Student, Classroom, Announcement, MenuDay } from '../types';
 
+// Helper to get today's date in YYYY-MM-DD for mock purposes
+const todayDate = new Date();
+const todayFormatted = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+
 export const mockStudents: Student[] = [
   { 
     id: '101', 
@@ -25,6 +29,18 @@ export const mockStudents: Student[] = [
     guardianName: 'José Santos',
     guardianPhone: '(11) 92345-6789',
     guardianEmail: 'jose@email.com'
+  },
+  { 
+    id: '105', 
+    name: 'Leticia Garcia', 
+    classId: '3A', 
+    photoUrl: 'https://picsum.photos/id/1027/200', 
+    status: 'IN_CLASS', 
+    lastAccess: '07:55', 
+    birthday: todayFormatted, // DINAMIC BIRTHDAY FOR DEMO
+    guardianName: 'Fernanda Garcia',
+    guardianPhone: '(11) 99887-7665',
+    guardianEmail: 'fernanda@email.com'
   },
   { 
     id: '103', 
@@ -61,6 +77,7 @@ export const mockClassrooms: Classroom[] = [
 export const mockAnnouncements: Announcement[] = [
   { id: 'a1', title: 'Reunião de Pais', content: 'Próxima sexta-feira às 19h no auditório principal.', scheduledFor: '2024-05-20', category: 'EVENT' },
   { id: 'a2', title: 'Simulado ENEM', content: 'Inscrições abertas até o final desta semana.', scheduledFor: '2024-05-18', category: 'GENERAL' },
+  { id: 'a3', title: 'Cardápio Especial', content: 'Hoje teremos sobremesa especial para celebrar o aniversário da escola.', scheduledFor: '2024-05-19', category: 'GENERAL' },
 ];
 
 export const mockMenu: MenuDay = {
