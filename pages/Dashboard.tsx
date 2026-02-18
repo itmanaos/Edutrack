@@ -79,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv, stude
   
   const containerClasses = isTvMode 
     ? `fixed inset-0 z-[1000] p-6 flex flex-col gap-5 overflow-hidden transition-colors duration-700 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`
-    : 'space-y-8';
+    : 'space-y-8 pb-10'; // Added padding bottom for scrolling content
 
   const textSlateColor = isDark ? 'text-slate-400' : 'text-slate-500';
   const textTitleColor = isDark ? 'text-white' : 'text-slate-800';
@@ -160,17 +160,17 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv, stude
       </div>
 
       {/* Main Content Area */}
-      <div className={`flex-1 grid grid-cols-12 ${isTvMode ? 'gap-4 min-h-0' : 'gap-8'}`}>
+      <div className={`grid grid-cols-12 ${isTvMode ? 'gap-4 min-h-0 flex-1' : 'gap-8'}`}>
         
         {/* Coluna 1: Gráfico de Frequência */}
-        <div className={`col-span-12 lg:col-span-6 rounded-[1.5rem] p-6 border flex flex-col ${isTvMode ? (isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200'}`}>
+        <div className={`col-span-12 lg:col-span-6 rounded-[1.5rem] p-6 border flex flex-col ${isTvMode ? (isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200 shadow-sm'}`}>
           <div className="flex justify-between items-end mb-4">
             <div>
               <h3 className={`font-black ${isTvMode ? 'text-2xl mb-1' : 'text-xl'} ${textTitleColor}`}>Frequência Semanal</h3>
               <p className={`text-sm ${textSlateColor}`}>Taxa de ocupação histórica</p>
             </div>
           </div>
-          <div className="flex-1 w-full min-h-0">
+          <div className="flex-1 w-full min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#1e293b' : '#f1f5f9'} />
@@ -188,7 +188,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv, stude
         </div>
 
         {/* Coluna 2: Cardápio do Dia */}
-        <div className={`col-span-12 lg:col-span-3 rounded-[1.5rem] p-6 border flex flex-col ${isTvMode ? (isDark ? 'bg-indigo-900/10 border-indigo-900/30' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200'}`}>
+        <div className={`col-span-12 lg:col-span-3 rounded-[1.5rem] p-6 border flex flex-col ${isTvMode ? (isDark ? 'bg-indigo-900/10 border-indigo-900/30' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200 shadow-sm'}`}>
           <div className="flex items-center gap-3 mb-4 text-indigo-500">
             <Utensils className="w-6 h-6" />
             <h3 className={`font-black ${isTvMode ? 'text-xl' : 'text-xl'} ${textTitleColor}`}>Refeição</h3>
@@ -196,21 +196,21 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv, stude
           <div className="flex-1 flex flex-col justify-center gap-4">
              <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100'}`}>
                 <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-1">Menu Principal</p>
-                <p className={`font-black leading-tight ${isTvMode ? 'text-lg' : 'text-xl'}`}>{mockMenu.mainDish}</p>
+                <p className={`font-black leading-tight ${isTvMode ? 'text-lg' : 'text-lg'}`}>{mockMenu.mainDish}</p>
              </div>
              <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100'}`}>
                 <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Acompanhamento</p>
-                <p className={`font-bold leading-tight ${isTvMode ? 'text-md' : 'text-xl'}`}>{mockMenu.side}</p>
+                <p className={`font-bold leading-tight ${isTvMode ? 'text-md' : 'text-sm'}`}>{mockMenu.side}</p>
              </div>
              <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100'}`}>
                 <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-1">Sobremesa</p>
-                <p className={`font-bold leading-tight ${isTvMode ? 'text-md' : 'text-xl'}`}>{mockMenu.dessert}</p>
+                <p className={`font-bold leading-tight ${isTvMode ? 'text-md' : 'text-sm'}`}>{mockMenu.dessert}</p>
              </div>
           </div>
         </div>
 
         {/* Coluna 3: Aniversariantes do Dia */}
-        <div className={`col-span-12 lg:col-span-3 rounded-[1.5rem] p-6 border flex flex-col min-h-0 ${isTvMode ? (isDark ? 'bg-pink-900/10 border-pink-900/30' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200'}`}>
+        <div className={`col-span-12 lg:col-span-3 rounded-[1.5rem] p-6 border flex flex-col min-h-[300px] ${isTvMode ? (isDark ? 'bg-pink-900/10 border-pink-900/30' : 'bg-white border-slate-200 shadow-xl') : 'bg-white border-slate-200 shadow-sm'}`}>
           <div className="flex items-center gap-3 mb-4 text-pink-500">
             <Cake className="w-6 h-6" />
             <h3 className={`font-black ${isTvMode ? 'text-xl' : 'text-xl'} ${textTitleColor}`}>Comemorações</h3>
@@ -244,7 +244,48 @@ const Dashboard: React.FC<DashboardProps> = ({ isTvMode = false, onExitTv, stude
         </div>
       </div>
 
-      {/* Footer Ticker */}
+      {/* Mural de Avisos em formato de Cards */}
+      {!isTvMode && (
+        <div className="space-y-6 pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-600 rounded-lg text-white">
+                <Megaphone className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">Mural de Avisos Institucionais</h3>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockAnnouncements.map(ann => (
+              <div key={ann.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-300 transition-all hover:shadow-indigo-100/50 flex flex-col h-full group">
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+                    ann.category === 'URGENT' ? 'bg-rose-100 text-rose-600' :
+                    ann.category === 'EVENT' ? 'bg-amber-100 text-amber-600' :
+                    'bg-indigo-100 text-indigo-600'
+                  }`}>
+                    {ann.category === 'URGENT' ? 'Urgente' : ann.category === 'EVENT' ? 'Evento' : 'Geral'}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <Calendar className="w-3 h-3" />
+                    <span className="text-[10px] font-bold">
+                      {new Date(ann.scheduledFor).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                </div>
+                <h4 className="font-black text-slate-800 mb-3 group-hover:text-indigo-600 transition-colors leading-tight">{ann.title}</h4>
+                <p className="text-sm text-slate-500 leading-relaxed flex-1">{ann.content}</p>
+                <div className="mt-6 pt-4 border-t border-slate-50 flex justify-end">
+                   <button className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">Detalhes</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer Ticker - Apenas Modo TV */}
       {isTvMode && (
         <div className={`h-12 flex items-center overflow-hidden rounded-xl border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-inner'}`}>
           <div className="bg-indigo-600 px-4 h-full flex items-center gap-2 text-white font-black uppercase text-[10px] tracking-widest z-10 shrink-0">

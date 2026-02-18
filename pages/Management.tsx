@@ -35,7 +35,8 @@ import {
   Calendar,
   AtSign,
   Hash,
-  Award
+  Award,
+  IdCard
 } from 'lucide-react';
 import { EmergencyAlert, Announcement } from '../types';
 import { mockAnnouncements } from '../services/mockData';
@@ -44,6 +45,7 @@ type ManagementTab = 'students' | 'classes' | 'teachers' | 'rooms' | 'schedule' 
 
 interface StudentData {
   id: string;
+  registrationNumber: string;
   name: string;
   classId: string;
   photoUrl: string;
@@ -121,8 +123,8 @@ const Management: React.FC<ManagementProps> = ({ onAlertTriggered }) => {
   
   // Dynamic States
   const [students, setStudents] = useState<StudentData[]>([
-    { id: '101', name: 'Ana Silva', classId: '3º Ano A', photoUrl: 'https://picsum.photos/id/1011/200', birthday: '2008-05-15', guardianName: 'Maria Silva', guardianPhone: '(11) 91234-5678', guardianEmail: 'maria@email.com', status: 'Ativo' },
-    { id: '102', name: 'Bruno Santos', classId: '3º Ano A', photoUrl: 'https://picsum.photos/id/1012/200', birthday: '2007-11-20', guardianName: 'José Santos', guardianPhone: '(11) 92345-6789', guardianEmail: 'jose@email.com', status: 'Ativo' },
+    { id: '101', registrationNumber: '20240001', name: 'Ana Silva', classId: '3º Ano A', photoUrl: 'https://picsum.photos/id/1011/200', birthday: '2008-05-15', guardianName: 'Maria Silva', guardianPhone: '(11) 91234-5678', guardianEmail: 'maria@email.com', status: 'Ativo' },
+    { id: '102', registrationNumber: '20240002', name: 'Bruno Santos', classId: '3º Ano A', photoUrl: 'https://picsum.photos/id/1012/200', birthday: '2007-11-20', guardianName: 'José Santos', guardianPhone: '(11) 92345-6789', guardianEmail: 'jose@email.com', status: 'Ativo' },
   ]);
 
   const [classes, setClasses] = useState<ClassData[]>([
@@ -414,7 +416,7 @@ const AnnouncementsListView = ({ data, onRemove }: { data: Announcement[], onRem
   </div>
 );
 
-// --- Form Components (Cleaned duplicates) ---
+// --- Form Components ---
 
 const AnnouncementFormModal = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (data: Announcement) => void }) => {
   const [formData, setFormData] = useState<Partial<Announcement>>({
@@ -485,8 +487,6 @@ const AnnouncementFormModal = ({ onClose, onSubmit }: { onClose: () => void, onS
   );
 };
 
-// --- Communications View (Push Alerts) ---
-
 const CommunicationsView = ({ onAlertTriggered }: { onAlertTriggered?: (alert: EmergencyAlert) => void }) => {
   const [alertForm, setAlertForm] = useState<Partial<EmergencyAlert>>({
     title: '',
@@ -504,14 +504,12 @@ const CommunicationsView = ({ onAlertTriggered }: { onAlertTriggered?: (alert: E
     setSendingStatus('SENDING');
     setProgress(0);
 
-    // Simulate batch sending progress
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           setSendingStatus('SENT');
           
-          // Trigger the visual push notification simulation
           if (onAlertTriggered) {
             onAlertTriggered({
               id: Date.now().toString(),
@@ -549,7 +547,6 @@ const CommunicationsView = ({ onAlertTriggered }: { onAlertTriggered?: (alert: E
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Composition Form */}
         <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
           <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Compor Alerta Emergencial</h4>
           <form onSubmit={handleSendAlert} className="space-y-6">
@@ -644,14 +641,12 @@ const CommunicationsView = ({ onAlertTriggered }: { onAlertTriggered?: (alert: E
           </form>
         </div>
 
-        {/* Live Preview & Stats */}
         <div className="space-y-8">
            <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
               <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-8">Visualização da Notificação Push</h4>
               
               <div className="max-w-xs mx-auto space-y-4">
-                {/* Mock Phone Lock Screen Notification */}
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-xl animate-pulse">
                    <div className="flex items-center gap-2 mb-2">
                      <div className="p-1.5 bg-indigo-600 rounded-md">
@@ -665,34 +660,16 @@ const CommunicationsView = ({ onAlertTriggered }: { onAlertTriggered?: (alert: E
                 <p className="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">iOS / Android Lockscreen Mockup</p>
               </div>
            </div>
-
-           <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Usuários Alcançáveis</p>
-                <div className="flex items-center gap-3">
-                  <Smartphone className="w-5 h-5 text-indigo-500" />
-                  <span className="text-2xl font-black text-slate-800">1.240</span>
-                </div>
-              </div>
-              <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Canal Principal</p>
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                  <span className="text-xl font-black text-slate-800">Push App</span>
-                </div>
-              </div>
-           </div>
         </div>
       </div>
     </div>
   );
 };
 
-// --- Other Form Modals ---
-
 const StudentFormModal = ({ classes, onClose, onSubmit }: { classes: ClassData[], onClose: () => void, onSubmit: (data: StudentData) => void }) => {
   const [formData, setFormData] = useState<StudentData>({
     id: '',
+    registrationNumber: '',
     name: '',
     classId: '',
     photoUrl: '',
@@ -731,7 +708,6 @@ const StudentFormModal = ({ classes, onClose, onSubmit }: { classes: ClassData[]
         
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Photo Column */}
             <div className="md:col-span-1 space-y-4">
                <label className="block text-sm font-bold text-slate-700 mb-1">Reconhecimento Facial</label>
                <div className="relative group">
@@ -750,29 +726,30 @@ const StudentFormModal = ({ classes, onClose, onSubmit }: { classes: ClassData[]
                       </div>
                     )}
                  </div>
-                 <button 
-                  type="button"
-                  onClick={simulatePhotoCapture}
-                  className="mt-3 w-full py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2"
-                 >
+                 <button type="button" onClick={simulatePhotoCapture} className="mt-3 w-full py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
                    <RotateCcw className="w-3 h-3" />
                    {formData.photoUrl ? 'Trocar Foto' : 'Capturar Agora'}
                  </button>
                </div>
             </div>
 
-            {/* Fields Column */}
             <div className="md:col-span-2 space-y-6">
               <div className="space-y-4">
                 <h4 className="text-xs font-bold text-indigo-500 uppercase tracking-widest border-b border-indigo-100 pb-2">Dados Acadêmicos</h4>
                 <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1">Nome Completo do Aluno</label>
-                    <input required type="text" placeholder="Nome do estudante" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Nome Completo</label>
+                      <input required type="text" placeholder="Nome do estudante" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Número de Matrícula</label>
+                      <input required type="text" placeholder="Ex: 20240001" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.registrationNumber} onChange={(e) => setFormData({...formData, registrationNumber: e.target.value})} />
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Data de Nascimento</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Nascimento</label>
                       <input required type="date" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" value={formData.birthday} onChange={(e) => setFormData({...formData, birthday: e.target.value})} />
                     </div>
                     <div>
@@ -816,14 +793,13 @@ const StudentFormModal = ({ classes, onClose, onSubmit }: { classes: ClassData[]
   );
 };
 
-// --- Lists ---
 const StudentsList = ({ data, onViewDetail }: { data: StudentData[], onViewDetail: (item: StudentData) => void }) => (
   <div className="overflow-x-auto">
     <table className="w-full text-left">
       <thead>
         <tr className="bg-slate-50 border-b border-slate-200">
           <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Aluno</th>
-          <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ID</th>
+          <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Matrícula</th>
           <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Turma</th>
           <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
           <th className="px-6 py-4"></th>
@@ -838,8 +814,8 @@ const StudentsList = ({ data, onViewDetail }: { data: StudentData[], onViewDetai
                 <span className="font-bold text-slate-800">{item.name}</span>
               </div>
             </td>
-            <td className="px-6 py-4 text-sm font-mono text-slate-500">{item.id}</td>
-            <td className="px-6 py-4 text-sm font-medium text-indigo-600">{item.classId}</td>
+            <td className="px-6 py-4 text-sm font-mono text-indigo-600 font-bold">{item.registrationNumber}</td>
+            <td className="px-6 py-4 text-sm font-medium text-slate-600">{item.classId}</td>
             <td className="px-6 py-4">
               <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${item.status === 'Ativo' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                 {item.status}
@@ -1008,20 +984,14 @@ const ScheduleView = ({ classes, teachers, rooms, schedules, onEditSlot, onRemov
 const StudentDetailModal = ({ student, onClose }: { student: StudentData, onClose: () => void }) => (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
     <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
-      {/* Banner Header */}
       <div className="h-32 bg-indigo-600 relative">
         <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors text-white">
           <X className="w-5 h-5" />
         </button>
       </div>
-
       <div className="px-10 pb-10 -mt-16">
         <div className="flex flex-col md:flex-row gap-8 items-start md:items-end mb-10">
-          <img 
-            src={student.photoUrl} 
-            className="w-40 h-40 rounded-3xl object-cover border-8 border-white shadow-xl bg-white" 
-            alt={student.name} 
-          />
+          <img src={student.photoUrl} className="w-40 h-40 rounded-3xl object-cover border-8 border-white shadow-xl bg-white" alt={student.name} />
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-3">
               <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{student.name}</h3>
@@ -1035,15 +1005,13 @@ const StudentDetailModal = ({ student, onClose }: { student: StudentData, onClos
                 <span className="font-bold text-sm tracking-tight">{student.classId}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Hash className="w-4 h-4 text-slate-300" />
-                <span className="font-mono text-xs">{student.id}</span>
+                <IdCard className="w-4 h-4 text-slate-300" />
+                <span className="font-mono text-xs">{student.registrationNumber}</span>
               </div>
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Informações Pessoais */}
           <div className="space-y-6">
             <h4 className="text-xs font-black text-indigo-500 uppercase tracking-widest border-b border-slate-100 pb-3">Informações Acadêmicas</h4>
             <div className="space-y-4">
@@ -1052,8 +1020,6 @@ const StudentDetailModal = ({ student, onClose }: { student: StudentData, onClos
               <DetailField icon={Clock} label="Último Acesso Registrado" value="Hoje às 07:45" />
             </div>
           </div>
-
-          {/* Responsável Legal */}
           <div className="space-y-6">
             <h4 className="text-xs font-black text-emerald-500 uppercase tracking-widest border-b border-slate-100 pb-3">Contato dos Responsáveis</h4>
             <div className="space-y-4">
@@ -1063,15 +1029,9 @@ const StudentDetailModal = ({ student, onClose }: { student: StudentData, onClos
             </div>
           </div>
         </div>
-
         <div className="mt-12 flex gap-4">
-          <button className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-3">
-             <Edit2 className="w-5 h-5" />
-             Editar Cadastro
-          </button>
-          <button onClick={onClose} className="px-10 py-4 bg-slate-50 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all">
-            Fechar
-          </button>
+          <button className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-3"><Edit2 className="w-5 h-5" />Editar Cadastro</button>
+          <button onClick={onClose} className="px-10 py-4 bg-slate-50 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all">Fechar</button>
         </div>
       </div>
     </div>
@@ -1086,15 +1046,12 @@ const TeacherDetailModal = ({ teacher, onClose }: { teacher: TeacherData, onClos
           <X className="w-5 h-5" />
         </button>
       </div>
-
       <div className="px-10 pb-10 -mt-16">
         <div className="flex flex-col md:flex-row gap-8 items-start md:items-end mb-10">
           {teacher.photoUrl ? (
             <img src={teacher.photoUrl} className="w-40 h-40 rounded-3xl object-cover border-8 border-white shadow-xl bg-white" alt={teacher.name} />
           ) : (
-            <div className="w-40 h-40 rounded-3xl bg-indigo-50 border-8 border-white shadow-xl flex items-center justify-center text-indigo-500 font-black text-5xl">
-              {teacher.name.charAt(0)}
-            </div>
+            <div className="w-40 h-40 rounded-3xl bg-indigo-50 border-8 border-white shadow-xl flex items-center justify-center text-indigo-500 font-black text-5xl">{teacher.name.charAt(0)}</div>
           )}
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-3">
@@ -1104,18 +1061,11 @@ const TeacherDetailModal = ({ teacher, onClose }: { teacher: TeacherData, onClos
               </span>
             </div>
             <div className="flex items-center gap-6 text-slate-500">
-              <div className="flex items-center gap-2 font-bold text-sm tracking-tight">
-                <Briefcase className="w-4 h-4 text-indigo-500" />
-                {teacher.subject}
-              </div>
-              <div className="flex items-center gap-2">
-                <Hash className="w-4 h-4 text-slate-300" />
-                <span className="font-mono text-xs">ID: {teacher.id}</span>
-              </div>
+              <div className="flex items-center gap-2 font-bold text-sm tracking-tight"><Briefcase className="w-4 h-4 text-indigo-500" />{teacher.subject}</div>
+              <div className="flex items-center gap-2"><Hash className="w-4 h-4 text-slate-300" /><span className="font-mono text-xs">ID: {teacher.id}</span></div>
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="space-y-6">
             <h4 className="text-xs font-black text-indigo-500 uppercase tracking-widest border-b border-slate-100 pb-3">Perfil Profissional</h4>
@@ -1125,7 +1075,6 @@ const TeacherDetailModal = ({ teacher, onClose }: { teacher: TeacherData, onClos
               <DetailField icon={Award} label="Titularidade" value="Especialista Senior" />
             </div>
           </div>
-
           <div className="space-y-6">
             <h4 className="text-xs font-black text-emerald-500 uppercase tracking-widest border-b border-slate-100 pb-3">Canais de Contato</h4>
             <div className="space-y-4">
@@ -1135,15 +1084,9 @@ const TeacherDetailModal = ({ teacher, onClose }: { teacher: TeacherData, onClos
             </div>
           </div>
         </div>
-
         <div className="mt-12 flex gap-4">
-          <button className="flex-1 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 shadow-lg shadow-slate-100 transition-all flex items-center justify-center gap-3">
-             <Edit2 className="w-5 h-5" />
-             Atualizar Prontuário
-          </button>
-          <button onClick={onClose} className="px-10 py-4 bg-slate-50 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all">
-            Fechar
-          </button>
+          <button className="flex-1 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 shadow-lg shadow-slate-100 transition-all flex items-center justify-center gap-3"><Edit2 className="w-5 h-5" />Atualizar Prontuário</button>
+          <button onClick={onClose} className="px-10 py-4 bg-slate-50 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all">Fechar</button>
         </div>
       </div>
     </div>
@@ -1152,9 +1095,7 @@ const TeacherDetailModal = ({ teacher, onClose }: { teacher: TeacherData, onClos
 
 const DetailField = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
   <div className="flex gap-4 items-center">
-    <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0">
-      <Icon className="w-4 h-4" />
-    </div>
+    <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0"><Icon className="w-4 h-4" /></div>
     <div className="min-w-0">
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
       <p className="text-sm font-bold text-slate-700 truncate">{value}</p>
@@ -1162,16 +1103,11 @@ const DetailField = ({ icon: Icon, label, value }: { icon: any, label: string, v
   </div>
 );
 
-// --- Form Modals implementation ---
-
 const ClassDetailModal = ({ classData, onClose }: any) => (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
     <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl p-10 border border-slate-100 animate-in zoom-in-95 duration-200">
       <div className="flex justify-between items-start mb-8">
-        <div>
-           <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1 block">Configuração de Turma</span>
-           <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{classData.name}</h3>
-        </div>
+        <div><span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1 block">Configuração de Turma</span><h3 className="text-3xl font-black text-slate-800 tracking-tighter">{classData.name}</h3></div>
         <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400"><X className="w-6 h-6" /></button>
       </div>
       <div className="space-y-6">
@@ -1181,9 +1117,7 @@ const ClassDetailModal = ({ classData, onClose }: any) => (
         <DetailField icon={MapPin} label="Sala Alocada" value={classData.room} />
         <DetailField icon={Users} label="Total de Alunos" value={`${classData.students} matriculados`} />
       </div>
-      <button onClick={onClose} className="w-full mt-10 py-4 bg-slate-100 font-black text-slate-600 rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs tracking-widest">
-        Fechar Detalhes
-      </button>
+      <button onClick={onClose} className="w-full mt-10 py-4 bg-slate-100 font-black text-slate-600 rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs tracking-widest">Fechar Detalhes</button>
     </div>
   </div>
 );
@@ -1192,10 +1126,7 @@ const RoomDetailModal = ({ room, onClose }: any) => (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
     <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl p-10 border border-slate-100 animate-in zoom-in-95 duration-200">
        <div className="flex justify-between items-start mb-8">
-        <div>
-           <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 block">Gestão de Espaços</span>
-           <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{room.id}</h3>
-        </div>
+        <div><span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 block">Gestão de Espaços</span><h3 className="text-3xl font-black text-slate-800 tracking-tighter">{room.id}</h3></div>
         <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400"><X className="w-6 h-6" /></button>
       </div>
       <div className="space-y-6">
@@ -1204,9 +1135,7 @@ const RoomDetailModal = ({ room, onClose }: any) => (
         <DetailField icon={Users} label="Lotação Máxima" value={`${room.capacity} personas`} />
         <DetailField icon={ShieldCheck} label="Status de Disponibilidade" value={room.status} />
       </div>
-      <button onClick={onClose} className="w-full mt-10 py-4 bg-slate-100 font-black text-slate-600 rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs tracking-widest">
-        Fechar Detalhes
-      </button>
+      <button onClick={onClose} className="w-full mt-10 py-4 bg-slate-100 font-black text-slate-600 rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs tracking-widest">Fechar Detalhes</button>
     </div>
   </div>
 );
@@ -1215,12 +1144,7 @@ const ClassFormModal = ({ onClose, onSubmit }: any) => {
   const [formData, setFormData] = useState({ name: '', grade: '', shift: 'Matutino', students: 0, room: '' });
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60">
-      <div className="bg-white rounded-3xl w-full max-w-md p-8">
-        <h3 className="text-xl font-bold mb-6">Nova Turma</h3>
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Nome" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Série" value={formData.grade} onChange={e => setFormData({...formData, grade: e.target.value})} />
-        <button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg">Salvar</button>
-      </div>
+      <div className="bg-white rounded-3xl w-full max-w-md p-8"><h3 className="text-xl font-bold mb-6">Nova Turma</h3><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Nome" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Série" value={formData.grade} onChange={e => setFormData({...formData, grade: e.target.value})} /><button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg">Salvar</button></div>
     </div>
   );
 };
@@ -1229,12 +1153,7 @@ const TeacherFormModal = ({ onClose, onSubmit }: any) => {
   const [formData, setFormData] = useState({ name: '', subject: '', email: '', hours: '40h', status: 'Ativo' });
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60">
-      <div className="bg-white rounded-3xl w-full max-w-md p-8">
-        <h3 className="text-xl font-bold mb-6">Novo Professor</h3>
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Nome" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Disciplina" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
-        <button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-black rounded-xl shadow-lg">Salvar Professor</button>
-      </div>
+      <div className="bg-white rounded-3xl w-full max-w-md p-8"><h3 className="text-xl font-bold mb-6">Novo Professor</h3><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Nome" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Disciplina" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} /><button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-black rounded-xl shadow-lg">Salvar Professor</button></div>
     </div>
   );
 };
@@ -1243,12 +1162,7 @@ const RoomFormModal = ({ onClose, onSubmit }: any) => {
   const [formData, setFormData] = useState({ id: '', name: '', type: 'Teórica', capacity: 30, status: 'Disponível' });
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60">
-      <div className="bg-white rounded-3xl w-full max-w-md p-8">
-        <h3 className="text-xl font-bold mb-6">Nova Sala</h3>
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Código" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} />
-        <input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Descrição" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-        <button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-black rounded-xl shadow-lg">Salvar Sala</button>
-      </div>
+      <div className="bg-white rounded-3xl w-full max-w-md p-8"><h3 className="text-xl font-bold mb-6">Nova Sala</h3><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Código" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} /><input className="w-full mb-4 px-4 py-3 bg-slate-50 border rounded-xl" placeholder="Descrição" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /><button onClick={() => onSubmit(formData)} className="w-full py-4 bg-indigo-600 text-white font-black rounded-xl shadow-lg">Salvar Sala</button></div>
     </div>
   );
 };
@@ -1256,26 +1170,7 @@ const RoomFormModal = ({ onClose, onSubmit }: any) => {
 const ScheduleFormModal = ({ day, slot, existingEntry, teachers, rooms, onClose, onSubmit }: any) => {
   const [formData, setFormData] = useState<ScheduleEntry>(existingEntry || { day, slot, subject: '', teacherId: '', roomId: '' });
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden p-8">
-        <h3 className="text-xl font-black mb-6 tracking-tight">Agendar Aula</h3>
-        <div className="space-y-4">
-           <input required type="text" placeholder="Disciplina" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} />
-           <select required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.teacherId} onChange={(e) => setFormData({...formData, teacherId: e.target.value})}>
-             <option value="">Professor...</option>
-             {teachers.map((t:any) => <option key={t.id} value={t.id}>{t.name}</option>)}
-           </select>
-           <select required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.roomId} onChange={(e) => setFormData({...formData, roomId: e.target.value})}>
-             <option value="">Sala...</option>
-             {rooms.map((r:any) => <option key={r.id} value={r.id}>{r.id}</option>)}
-           </select>
-        </div>
-        <div className="flex gap-4 mt-8">
-          <button onClick={onClose} className="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">Cancelar</button>
-          <button onClick={() => onSubmit(formData)} className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg">Salvar</button>
-        </div>
-      </div>
-    </div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"><div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden p-8"><h3 className="text-xl font-black mb-6 tracking-tight">Agendar Aula</h3><div className="space-y-4"><input required type="text" placeholder="Disciplina" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} /><select required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.teacherId} onChange={(e) => setFormData({...formData, teacherId: e.target.value})}><option value="">Professor...</option>{teachers.map((t:any) => <option key={t.id} value={t.id}>{t.name}</option>)}</select><select required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" value={formData.roomId} onChange={(e) => setFormData({...formData, roomId: e.target.value})}><option value="">Sala...</option>{rooms.map((r:any) => <option key={r.id} value={r.id}>{r.id}</option>)}</select></div><div className="flex gap-4 mt-8"><button onClick={onClose} className="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">Cancelar</button><button onClick={() => onSubmit(formData)} className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg">Salvar</button></div></div></div>
   );
 };
 
